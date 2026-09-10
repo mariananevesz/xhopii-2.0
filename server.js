@@ -20,7 +20,6 @@ app.use(morgan('combined', {stream: logFile}))
 app.use(helmet())
 
 app.use(compression());
-app.use(express.static(path.join(__dirname, 'assets')))
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000,
     max: 5,
