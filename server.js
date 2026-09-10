@@ -15,6 +15,31 @@ app.get('/', (req, res) => {
     res.sendFile(filePath);
 })
 
+app.get('/login', (req, res) => {
+    const filePath = path.join(__dirname, 'views', 'login.html');
+    res.sendFile(filePath);
+})
+
+app.get('/clientes/cadastrar', (req, res) => {
+    const filePath = path.join(__dirname, 'views', 'cadastrar-cliente.html');
+    res.sendFile(filePath);
+})
+
+app.get('/funcionario/cadastrar', (req, res) => {
+    const filePath = path.join(__dirname, 'views', 'cadastrar-funcionario.html');
+    res.sendFile(filePath);
+})
+
+app.get('/produto/cadastrar', (req, res) => {
+    const filePath = path.join(__dirname, 'views', 'cadastrar-produto.html');
+    res.sendFile(filePath);
+})
+
+app.get('/recuperar-senha', (req, res) => {
+    const filePath = path.join(__dirname, 'views', 'recuperar-senha.html');
+    res.sendFile(filePath);
+})
+
 app.listen(port, () => {
     console.log(`Servidor ativo rodando na porta ${port}`);
 })
