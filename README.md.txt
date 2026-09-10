@@ -2,8 +2,5 @@
 
 ## Integrantes
 
-- **Nome:**  Inserir nome completo
-  **RA:** Inserir o RA
-
-- **Nome:**  Inserir nome completo
+- **Nome:**  Mariana Neves Pereira
   **RA:** Inserir o RA
