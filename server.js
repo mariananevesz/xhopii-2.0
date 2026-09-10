@@ -23,10 +23,10 @@ app.use(compression());
 app.use(express.static(path.join(__dirname, 'assets')))
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000,
-    max: 10,
+    max: 5,
     message: "SAI FORA!"
 })
-app.use(limiter);
+
 
 app.get('/', (req, res) => {
     const filePath = path.join(__dirname, 'views', 'home.html');
@@ -105,6 +105,27 @@ app.post('/produtos', (req, res) => {
         <p>Descrição: ${inputDescricaoProd}</p>
         <p>Valor: ${inputValorProd}</p>
         <p>Quantidade: ${inputQtdProd}</p>`)
+})
+
+app.post('/login', limiter, (req, res) => {
+    const { inputEmailLog, inputSenhaLog } = req.body;
+    const filePath = path.join(__dirname, 'usuarios.json');
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+            res.send('Erro ao ler arquivo de usuários');
+            return;
+        }
+        const usuarios = JSON.parse(data);
+        const usuarioEncontrado = usuarios.find(usuario =>
+            usuario.usuario === inputEmailLog &&
+            usuario.senha === inputSenhaLog
+        );
+        if (usuarioEncontrado) {
+            res.redirect('/');
+        } else {
+            res.send('Usuário não encontrado');
+        }
+    });
 })
 
 app.listen(port, () => {
