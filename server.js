@@ -1,5 +1,10 @@
 import express from 'express'
 import path from 'path'
+import fs from 'fs'
+import morgan from 'morgan'
+import helmet from 'helmet'
+import compression from 'compression'
+import rateLimit from 'express-rate-limit'
 
 const pathAbsolute = new URL('.', import.meta.url).pathname;
 const __dirname = pathAbsolute.slice(1);
@@ -9,6 +14,19 @@ const port = 3000
 
 app.use(express.urlencoded({extended: true}))
 app.use(express.static(path.join(__dirname, 'assets')))
+
+const logFile = fs.createWriteStream(path.join(__dirname, 'acess.log'),{flags:'a'})
+app.use(morgan('combined', {stream: logFile}))
+app.use(helmet())
+
+app.use(compression());
+app.use(express.static(path.join(__dirname, 'assets')))
+const limiter = rateLimit({
+    windowMs: 10 * 60 * 1000,
+    max: 10,
+    message: "SAI FORA!"
+})
+app.use(limiter);
 
 app.get('/', (req, res) => {
     const filePath = path.join(__dirname, 'views', 'home.html');
@@ -37,6 +55,16 @@ app.get('/produto/cadastrar', (req, res) => {
 
 app.get('/recuperar-senha', (req, res) => {
     const filePath = path.join(__dirname, 'views', 'recuperar-senha.html');
+    res.sendFile(filePath);
+})
+
+app.get('/funcionarios', (req, res) => {
+    const filePath = path.join(__dirname, 'views', 'visualizar-funcionario.html');
+    res.sendFile(filePath);
+})
+
+app.get('/produtos', (req, res) => {
+    const filePath = path.join(__dirname, 'views', 'ver-produto.html');
     res.sendFile(filePath);
 })
 
