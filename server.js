@@ -97,19 +97,39 @@ app.post('/clientes', async (req, res) => {
     }
 })
 
-app.post('/funcionarios', (req, res) => {
-    const {inputNomeFunc,inputSobrenomeFunc,inputCPFFunc,inputDataNascFunc,inputTelefoneFunc,inputCargoFunc,inputSalarioFunc,inputEmailFunc,inputSenha } = req.body;
+app.post('/funcionarios', async (req, res) => {
+    const {
+        inputNomeFunc,
+        inputSobrenomeFunc,
+        inputCPFFunc,
+        inputDataNascFunc,
+        inputTelefoneFunc,
+        inputCargoFunc,
+        inputSalarioFunc,
+        inputEmailFunc,
+        inputSenha
+    } = req.body;
 
-    res.send(`<h1>Dados recebidos</h1>
-        <p>Nome: ${inputNomeFunc}</p>
-        <p>Sobrenome: ${inputSobrenomeFunc}</p>
-        <p>CPF: ${inputCPFFunc}</p>
-        <p>Data de Nascimento: ${inputDataNascFunc}</p>
-        <p>Telefone: ${inputTelefoneFunc}</p>
-        <p>Cargo: ${inputCargoFunc}</p>
-        <p>Salário: ${inputSalarioFunc}</p>
-        <p>Email: ${inputEmailFunc}</p>
-        <p>Senha: ${inputSenha}</p>`)
+    try {
+        const db = getDatabase();
+
+        await db.collection('funcionarios').insertOne({
+            nome: inputNomeFunc,
+            sobrenome: inputSobrenomeFunc,
+            cpf: inputCPFFunc,
+            dataNascimento: inputDataNascFunc,
+            telefone: inputTelefoneFunc,
+            cargo: inputCargoFunc,
+            salario: inputSalarioFunc,
+            email: inputEmailFunc,
+            senha: inputSenha
+        });
+
+        res.send('Funcionário cadastrado com sucesso!');
+    } catch (erro) {
+        console.log('Erro ao cadastrar funcionário:', erro);
+        res.send('Erro ao cadastrar funcionário');
+    }
 })
 
 app.post('/produtos', (req, res) => {
