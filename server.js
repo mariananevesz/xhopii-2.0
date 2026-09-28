@@ -6,7 +6,7 @@ import helmet from 'helmet'
 import compression from 'compression'
 import rateLimit from 'express-rate-limit'
 import dotenv from 'dotenv';
-import { connectDatabase } from './config/database.js';
+import { connectDatabase, getDatabase } from './config/database.js';
 
 dotenv.config();
 
@@ -15,6 +15,9 @@ const __dirname = pathAbsolute.slice(1);
 
 const app = express()
 const port = process.env.PORT || 3000
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.urlencoded({extended: true}))
 app.use(express.static(path.join(__dirname, 'assets')))
@@ -71,17 +74,27 @@ app.get('/produtos', (req, res) => {
     res.sendFile(filePath);
 })
 
-app.post('/clientes', (req, res) => {
+app.post('/clientes', async (req, res) => {
     const { nome, sobrenome, cpf, dataNascimento, telefone, email, senha } = req.body;
 
-    res.send(`<h1>Dados recebidos</h1>
-        <p>Nome: ${nome}</p>
-        <p>Sobrenome: ${sobrenome}</p>
-        <p>CPF: ${cpf}</p>
-        <p>Data de Nascimento: ${dataNascimento}</p>
-        <p>Telefone: ${telefone}</p>
-        <p>Email: ${email}</p>
-        <p>Senha: ${senha}</p>`)
+    try {
+        const db = getDatabase();
+
+        await db.collection('clientes').insertOne({
+            nome,
+            sobrenome,
+            cpf,
+            dataNascimento,
+            telefone,
+            email,
+            senha
+        });
+
+        res.send('Cliente cadastrado com sucesso!');
+    } catch (erro) {
+        console.log('Erro ao cadastrar cliente:', erro);
+        res.send('Erro ao cadastrar cliente');
+    }
 })
 
 app.post('/funcionarios', (req, res) => {
@@ -129,6 +142,19 @@ app.post('/login', limiter, (req, res) => {
             res.send('Usuário não encontrado');
         }
     });
+})
+
+app.get('/clientes', async (req, res) => {
+    try {
+        const db = getDatabase();
+
+        const clientes = await db.collection('clientes').find().toArray();
+
+        res.render('visualizar-cliente', { clientes });
+    } catch (erro) {
+        console.log('Erro ao buscar clientes:', erro);
+        res.send('Erro ao buscar clientes');
+    }
 })
 
 connectDatabase()
