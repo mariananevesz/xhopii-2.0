@@ -5,12 +5,16 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import compression from 'compression'
 import rateLimit from 'express-rate-limit'
+import dotenv from 'dotenv';
+import { connectDatabase } from './config/database.js';
+
+dotenv.config();
 
 const pathAbsolute = new URL('.', import.meta.url).pathname;
 const __dirname = pathAbsolute.slice(1);
 
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 
 app.use(express.urlencoded({extended: true}))
 app.use(express.static(path.join(__dirname, 'assets')))
@@ -127,6 +131,12 @@ app.post('/login', limiter, (req, res) => {
     });
 })
 
-app.listen(port, () => {
-    console.log(`Servidor ativo rodando na porta ${port}`);
-})
+connectDatabase()
+    .then(() => {
+        app.listen(port, () => {
+            console.log(`Servidor ativo rodando na porta ${port}`);
+        })
+    })
+    .catch((erro) => {
+        console.log('Erro ao conectar com MongoDB:', erro);
+    });
