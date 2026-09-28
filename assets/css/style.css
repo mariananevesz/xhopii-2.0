@@ -160,6 +160,22 @@ body{
     cursor: pointer;
 }
 
+.mensagem-erro-login{
+    width: 75%;
+    padding: 10px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+
+    color: rgb(251,86,48);
+    background-color: rgb(255,240,235);
+
+    border: 1px solid rgb(251,86,48);
+    border-radius: 3px;
+
+    font-size: 0.85rem;
+    text-align: center;
+}
+
 .conteudo-login .conteudo-login-info .conteudo-login-recuperacao{
     width: 80%;
     margin-left: 10%;

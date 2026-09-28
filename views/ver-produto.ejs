@@ -4,51 +4,79 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link rel="icon" href="/img/logo.png" type="image/png">
-    <title>Xhopii - Login</title>
+    <title>Xhopii - Ver Produtos</title>
 </head>
 <body>
-    
-    <header class="cabecalho-login">
-        <section id="cabecalho-login-logo">
+
+    <header>
+        <section id="cabecalho-logo">
             <img src="/img/logo.png">
             <h1>Xhopii</h1>
-            <p>Entre</p>
         </section>
-        <section id="cabecalho-login-ajuda">
-            <p>Precisa de ajuda?</p>
+
+        <section id="cabecalho-logout">
+            <a href="/login">Sair</a>
         </section>
     </header>
 
-    <section class="conteudo-login">
-        <section class="conteudo-login-info">
-            <form class="form-login" method="POST" action="/login">
-                <label id="label-log">Login</label>
-                <input id="input-log" type="text" placeholder="Email" name="inputEmailLog">
-                <input id="input-log" type="password" placeholder="Senha" name="inputSenhaLog">
-                <input id="botao-log" type="submit" value="ENTRE">
-            </form>
-            <section class="conteudo-login-recuperacao">
-                <a href="recuperar-senha">Esqueci minha senha</a>
-                <a href="#">Fazer login com SMS</a>
-            </section>
-            <section class="conteudo-login-alegoria">
-                <hr>
-                <p>Ou</p>
-                <hr>
-            </section>
-            <section class="conteudo-login-sociais">
-                <button><img src="/img/logo-facebook-cicle.png">Facebook</button>
-                <button><img src="/img/logo-google.png">Google</button>
-                <button><img src="/img/logo-apple.png">Apple</button>
-            </section>
-            <p>Novo na Xhopii? <a href="/clientes/cadastrar">Cadastrar</a></p>
+    <nav class="menu-horizontal">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/clientes/cadastrar">Cadastro Cliente</a></li>
+            <li><a href="/funcionario/cadastrar">Cadastro Funcionário</a></li>
+            <li><a href="/produto/cadastrar">Cadastro Produto</a></li>
+            <li><a href="/clientes">Ver Clientes</a></li>
+            <li><a href="/funcionarios">Ver Funcionários</a></li>
+            <li><a href="/produtos">Ver Produtos</a></li>
+        </ul>
+    </nav>
+
+    <section class="conteudo-visualizar">
+        <section class="conteudo-visualizar-box">
+
+            <h1>Produtos</h1>
+
+            <% if (produtos.length === 0) { %>
+                <p>Nenhum produto cadastrado.</p>
+            <% } %>
+
+            <% produtos.forEach(produto => { %>
+
+                <section class="conteudo-bloco">
+
+                    <h2><%= produto.nome %></h2>
+
+                    <p>Fabricante: <%= produto.fabricante %></p>
+
+                    <p>
+                        Descrição:
+                        <%= produto.descricao %>
+                    </p>
+
+                    <p>
+                        Valor:
+                        R$ <%= produto.valor %>
+                    </p>
+
+                    <p>
+                        Quantidade:
+                        <%= produto.quantidade %>
+                    </p>
+
+                </section>
+
+            <% }); %>
+
         </section>
     </section>
 
     <footer class="rodape">
+
         <section class="conteudo-rodape-info">
+
             <section class="conteudo-rodape">
                 <h5 id="rodape-titulo">Atendimento ao cliente</h5>
+
                 <a href="#">Central de Ajuda</a>
                 <a href="#">Como Comprar</a>
                 <a href="#">Métodos de Paramento</a>
@@ -58,8 +86,10 @@
                 <a href="#">Ouridoria</a>
                 <a href="#">Preferências de cookies</a>
             </section>
+
             <section class="conteudo-rodape">
                 <h5 id="rodape-titulo">Sobre a Xhopii</h5>
+
                 <a href="#">Sobre Nós</a>
                 <a href="#">Políticas Xhopii</a>
                 <a href="#">Política de Privacidade</a>
@@ -69,8 +99,10 @@
                 <a href="#">Xhopii Blog</a>
                 <a href="#">Impresa</a>
             </section>
+
             <section class="conteudo-rodape">
                 <h5 id="rodape-titulo">Pagamento</h5>
+
                 <section class="conteudo-rodape-pagamento">
                     <img id="img-pagamento" src="/img/logo-visa.png">
                     <img id="img-pagamento" src="/img/logo-mastercard.png">
@@ -79,25 +111,52 @@
                     <img id="img-pagamento" src="/img/logo-american-express.png">
                     <img id="img-pagamento" src="/img/logo-boleto.png">
                     <img id="img-pagamento" src="/img/logo-pix.png">
-                </section>               
+                </section>
             </section>
+
             <section class="conteudo-rodape">
                 <h5 id="rodape-titulo">Siga-nos</h5>
-                <a href="#"><img id="img-sociais" src="/img/logo-instagram.png">Instagram</a>
-                <a href="#"><img id="img-sociais" src="/img/logo-tiktok.png">Tik Tok</a>
-                <a href="#"><img id="img-sociais" src="/img/logo-twitter.png">X/Twitter</a>
-                <a href="#"><img id="img-sociais" src="/img/logo-facebook.png">Facebook</a>
-                <a href="#"><img id="img-sociais" src="/img/logo-linkedln.png">Linkedln</a>
+
+                <a href="#">
+                    <img id="img-sociais" src="/img/logo-instagram.png">
+                    Instagram
+                </a>
+
+                <a href="#">
+                    <img id="img-sociais" src="/img/logo-tiktok.png">
+                    Tik Tok
+                </a>
+
+                <a href="#">
+                    <img id="img-sociais" src="/img/logo-twitter.png">
+                    X/Twitter
+                </a>
+
+                <a href="#">
+                    <img id="img-sociais" src="/img/logo-facebook.png">
+                    Facebook
+                </a>
+
+                <a href="#">
+                    <img id="img-sociais" src="/img/logo-linkedln.png">
+                    Linkedln
+                </a>
             </section>
+
             <section class="conteudo-rodape">
                 <h5 id="rodape-titulo">Atendimento ao cliente</h5>
+
                 <img id="img-store" src="/img/qr-code.png">
                 <img id="img-store" src="/img/logo-store-apple.png">
                 <img id="img-store" src="/img/logo-google-play.png">
             </section>
+
         </section>
+
         <hr>
+
         <p>© 2025 Xhopii. Todos os direitos acadêmicos reservados</p>
+
     </footer>
 
 </body>

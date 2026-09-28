@@ -26,11 +26,14 @@ const logFile = fs.createWriteStream(path.join(__dirname, 'acess.log'),{flags:'a
 app.use(morgan('combined', {stream: logFile}))
 app.use(helmet())
 
-app.use(compression());
 const limiter = rateLimit({
     windowMs: 10 * 60 * 1000,
     max: 5,
-    message: "SAI FORA!"
+    handler: (req, res) => {
+        res.status(429).render('login', {
+            erro: 'Muitas tentativas de login. Tente novamente mais tarde.'
+        });
+    }
 })
 
 
@@ -40,8 +43,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/login', (req, res) => {
-    const filePath = path.join(__dirname, 'views', 'login.html');
-    res.sendFile(filePath);
+    res.render('login', { erro: null });
 })
 
 app.get('/clientes/cadastrar', (req, res) => {
@@ -64,14 +66,30 @@ app.get('/recuperar-senha', (req, res) => {
     res.sendFile(filePath);
 })
 
-app.get('/funcionarios', (req, res) => {
-    const filePath = path.join(__dirname, 'views', 'visualizar-funcionario.html');
-    res.sendFile(filePath);
+app.get('/funcionarios', async (req, res) => {
+    try {
+        const db = getDatabase();
+
+        const funcionarios = await db.collection('funcionarios').find().toArray();
+
+        res.render('visualizar-funcionario', { funcionarios });
+    } catch (erro) {
+        console.log('Erro ao buscar funcionários:', erro);
+        res.send('Erro ao buscar funcionários');
+    }
 })
 
-app.get('/produtos', (req, res) => {
-    const filePath = path.join(__dirname, 'views', 'ver-produto.html');
-    res.sendFile(filePath);
+app.get('/produtos', async (req, res) => {
+    try {
+        const db = getDatabase();
+
+        const produtos = await db.collection('produtos').find().toArray();
+
+        res.render('ver-produto', { produtos });
+    } catch (erro) {
+        console.log('Erro ao buscar produtos:', erro);
+        res.send('Erro ao buscar produtos');
+    }
 })
 
 app.post('/clientes', async (req, res) => {
@@ -90,7 +108,7 @@ app.post('/clientes', async (req, res) => {
             senha
         });
 
-        res.send('Cliente cadastrado com sucesso!');
+        res.redirect('/clientes/cadastrar');
     } catch (erro) {
         console.log('Erro ao cadastrar cliente:', erro);
         res.send('Erro ao cadastrar cliente');
@@ -125,7 +143,7 @@ app.post('/funcionarios', async (req, res) => {
             senha: inputSenha
         });
 
-        res.send('Funcionário cadastrado com sucesso!');
+        res.redirect('/funcionario/cadastrar');
     } catch (erro) {
         console.log('Erro ao cadastrar funcionário:', erro);
         res.send('Erro ao cadastrar funcionário');
@@ -152,32 +170,42 @@ app.post('/produtos', async (req, res) => {
             quantidade: inputQtdProd
         });
 
-        res.send('Produto cadastrado com sucesso!');
+        res.redirect('/produto/cadastrar');
     } catch (erro) {
         console.log('Erro ao cadastrar produto:', erro);
         res.send('Erro ao cadastrar produto');
     }
 })
 
-app.post('/login', limiter, (req, res) => {
+app.post('/login', limiter, async (req, res) => {
     const { inputEmailLog, inputSenhaLog } = req.body;
-    const filePath = path.join(__dirname, 'usuarios.json');
-    fs.readFile(filePath, 'utf8', (err, data) => {
-        if (err) {
-            res.send('Erro ao ler arquivo de usuários');
-            return;
-        }
-        const usuarios = JSON.parse(data);
-        const usuarioEncontrado = usuarios.find(usuario =>
-            usuario.usuario === inputEmailLog &&
-            usuario.senha === inputSenhaLog
-        );
-        if (usuarioEncontrado) {
+
+    try {
+        const db = getDatabase();
+        const cliente = await db.collection('clientes').findOne({
+            email: inputEmailLog,
+            senha: inputSenhaLog
+        });
+
+        const funcionario = await db.collection('funcionarios').findOne({
+            email: inputEmailLog,
+            senha: inputSenhaLog
+        });
+
+        if (cliente || funcionario) {
             res.redirect('/');
         } else {
-            res.send('Usuário não encontrado');
+            res.render('login', {
+                erro: 'E-mail ou senha inválidos!'
+            });
         }
-    });
+
+    } catch (erro) {
+        console.log('Erro ao realizar login:', erro);
+        res.render('login', {
+            erro: 'Erro ao realizar login.'
+        });
+    }
 })
 
 app.get('/clientes', async (req, res) => {
