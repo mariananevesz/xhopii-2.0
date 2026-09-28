@@ -132,15 +132,31 @@ app.post('/funcionarios', async (req, res) => {
     }
 })
 
-app.post('/produtos', (req, res) => {
-    const {inputNomeProd,inputFabricanteProd,inputDescricaoProd,inputValorProd,inputQtdProd } = req.body;
+app.post('/produtos', async (req, res) => {
+    const {
+        inputNomeProd,
+        inputFabricanteProd,
+        inputDescricaoProd,
+        inputValorProd,
+        inputQtdProd
+    } = req.body;
 
-    res.send(`<h1>Dados recebidos</h1>
-        <p>Nome: ${inputNomeProd}</p>
-        <p>Fabricante: ${inputFabricanteProd}</p>
-        <p>Descrição: ${inputDescricaoProd}</p>
-        <p>Valor: ${inputValorProd}</p>
-        <p>Quantidade: ${inputQtdProd}</p>`)
+    try {
+        const db = getDatabase();
+
+        await db.collection('produtos').insertOne({
+            nome: inputNomeProd,
+            fabricante: inputFabricanteProd,
+            descricao: inputDescricaoProd,
+            valor: inputValorProd,
+            quantidade: inputQtdProd
+        });
+
+        res.send('Produto cadastrado com sucesso!');
+    } catch (erro) {
+        console.log('Erro ao cadastrar produto:', erro);
+        res.send('Erro ao cadastrar produto');
+    }
 })
 
 app.post('/login', limiter, (req, res) => {
